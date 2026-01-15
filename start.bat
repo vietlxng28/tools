@@ -1,0 +1,37 @@
+@echo off
+setlocal
+title Tools Runner
+
+echo ===========================================
+echo               Starting Tools
+echo ===========================================
+echo.
+
+echo [1/2] Starting Spring Boot Backend...
+start "Spring-Backend" cmd /k "cd /d "%~dp0" && cd spring-backend && mvnw.cmd clean spring-boot:run"
+
+echo.
+echo [2/2] Checking React Frontend...
+
+if not exist "%~dp0react-frontend\node_modules\" (
+    echo [!] node_modules not found. Running npm install...
+    cd /d "%~dp0react-frontend" && call npm install
+
+    if %errorlevel% neq 0 (
+        echo [X] ERROR: npm install failed!
+        pause
+        exit /b %errorlevel%
+    )
+)
+
+echo.
+echo [3/3] Starting React Frontend...
+start "React-Frontend" cmd /k "cd /d "%~dp0" && cd react-frontend && npm run dev"
+
+echo.
+echo -------------------------------------------
+echo Application is starting. Closing in 3s...
+echo -------------------------------------------
+
+timeout /t 3 /nobreak > nul
+exit
