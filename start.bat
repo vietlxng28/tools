@@ -1,9 +1,9 @@
 @echo off
 setlocal
-title Excel Handler Runner
+title Tools Runner
 
 echo ===========================================
-echo    Starting Excel Handler Application
+echo              Starting Tools
 echo ===========================================
 echo.
 

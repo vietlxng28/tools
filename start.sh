@@ -7,7 +7,7 @@ cleanup() {
 }
 trap cleanup SIGINT SIGTERM
 echo "==========================================="
-echo "  Starting Excel Handler Application"
+echo "  Starting Tools Application"
 echo "==========================================="
 echo ""
 echo "[1/2] Starting Spring Boot Backend..."

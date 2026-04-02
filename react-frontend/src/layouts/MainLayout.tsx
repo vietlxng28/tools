@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Layout, Menu, theme, Button, Typography } from 'antd';
-import { UploadOutlined, CalculatorOutlined, MenuUnfoldOutlined, MenuFoldOutlined, FileExcelOutlined, CodeOutlined, FileSearchOutlined } from '@ant-design/icons';
+import { Layout, Menu, theme, Button } from 'antd';
+import { UploadOutlined, CalculatorOutlined, MenuUnfoldOutlined, MenuFoldOutlined, FileExcelOutlined, CodeOutlined, FileSearchOutlined, DatabaseOutlined, ScissorOutlined } from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 const { Header, Sider, Content } = Layout;
-const { Title } = Typography;
 
 const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -44,6 +43,16 @@ const MainLayout: React.FC = () => {
       key: '/ap2e',
       icon: <CalculatorOutlined />,
       label: 'DDL',
+    },
+    {
+      key: '/sqlmin',
+      icon: <DatabaseOutlined />,
+      label: 'SQL Minify',
+    },
+    {
+      key: '/cleaner',
+      icon: <ScissorOutlined />,
+      label: 'Data Cleaner',
     },
   ];
 
