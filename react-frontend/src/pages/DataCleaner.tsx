@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Card, Input, Button, Typography, Space, Divider, message, Tooltip, Checkbox, Row, Col } from 'antd';
-import { CopyOutlined, ClearOutlined, ScissorOutlined } from '@ant-design/icons';
-import { COMMON_STYLES, COLORS } from '../styles/styleConstants';
+import { Button, message, Checkbox, Row, Col, Typography } from 'antd';
+import { ScissorOutlined } from '@ant-design/icons';
+import { COMMON_STYLES } from '../styles/styleConstants';
+import PageContainer from '../components/PageContainer';
+import SectionCard from '../components/SectionCard';
+import CodeInput from '../components/CodeInput';
+import CodeDisplay from '../components/CodeDisplay';
 
 const { Text } = Typography;
-const { TextArea } = Input;
 
 const CLEANING_OPTIONS = [
   { label: '1. Gộp nhiều dòng trống liên tiếp', value: 'mergeEmptyLines' },
@@ -44,7 +47,6 @@ const DataCleaner: React.FC = () => {
         processed = processed.replace(/console\.(log|error|warn|info|debug|table|assert|clear|group|groupEnd|groupCollapsed)\s*\([\s\S]*?\)\s*;?/g, '');
       }
 
-
       if (selectedOptions.includes('removeJavaJsComments')) {
         processed = processed.replace(/(^|\s)\/\/(?!\s*https?:\/\/).*/gm, '$1').replace(/\/\*[\s\S]*?\*\//g, '');
       } else if (selectedOptions.includes('removeJsSingleLineComments')) {
@@ -67,16 +69,13 @@ const DataCleaner: React.FC = () => {
         processed = processed.replace(/\s*#.*/g, '');
       }
 
-
       if (selectedOptions.includes('removeCitation')) {
         processed = processed.replace(/\[cite:\s*(\d+\s*,\s*)*\d+\]/g, '');
       }
 
-
       if (selectedOptions.includes('removeEmojis')) {
         processed = processed.replace(/(?:\p{Extended_Pictographic}\uFE0F?(?:\u200D\p{Extended_Pictographic}\uFE0F?)*)|(?:\p{Regional_Indicator}{2})|(?:[0-9#*]\uFE0F?\u20E3)/gu, '');
       }
-
 
       if (selectedOptions.includes('removeTrailingSpaces')) {
         processed = processed.replace(/[ \t]+$/gm, '');
@@ -98,118 +97,54 @@ const DataCleaner: React.FC = () => {
     }
   };
 
-  const handleCopy = () => {
-    if (result) {
-      navigator.clipboard.writeText(result);
-      message.success('Đã copy kết quả!');
-    }
-  };
-
-  const handleClear = () => {
-    setInputData('');
-    setResult('');
-  };
-
   return (
-    <div style={COMMON_STYLES.pageContainer}>
-      <Card
-        title={
-          <Space>
-            <ScissorOutlined style={{ ...COMMON_STYLES.titleIcon, color: COLORS.primary }} />
-            <Text strong>Data Cleaner & Formatter</Text>
-          </Space>
-        }
-        bordered={false}
-        style={COMMON_STYLES.mainCard}
+    <PageContainer
+      title="Data Cleaner & Formatter"
+      icon={<ScissorOutlined />}
+      footerText="Công cụ làm sạch văn bản, tối lưu lượng code và văn bản thô theo các mẫu Regex biểu thức chuẩn hóa."
+    >
+      <SectionCard>
+        <Text strong style={{ display: 'block', marginBottom: 12 }}>Chọn các tác vụ làm sạch:</Text>
+        <Checkbox.Group
+          style={{ width: '100%' }}
+          value={selectedOptions}
+          onChange={(checkedValues) => setSelectedOptions(checkedValues as string[])}
+        >
+          <Row gutter={[16, 12]}>
+            {CLEANING_OPTIONS.map(option => (
+              <Col span={12} key={option.value}>
+                <Checkbox value={option.value}>{option.label}</Checkbox>
+              </Col>
+            ))}
+          </Row>
+        </Checkbox.Group>
+      </SectionCard>
+
+      <CodeInput
+        label="Nhập văn bản cần xử lý:"
+        value={inputData}
+        onChange={setInputData}
+        onClear={() => {
+          setInputData('');
+          setResult('');
+        }}
+        placeholder="Dán nội dung vào đây..."
+      />
+
+      <Button
+        type="primary"
+        icon={<ScissorOutlined />}
+        size="large"
+        block
+        onClick={handleClean}
+        disabled={!inputData.trim() || selectedOptions.length === 0}
+        style={COMMON_STYLES.primaryButton}
       >
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        Clean & Format Data
+      </Button>
 
-          <Card size="small" type="inner" style={COMMON_STYLES.sectionCard}>
-            <Text strong style={{ display: 'block', marginBottom: 12 }}>Chọn các tác vụ làm sạch:</Text>
-            <Checkbox.Group
-              style={{ width: '100%' }}
-              value={selectedOptions}
-              onChange={(checkedValues) => setSelectedOptions(checkedValues as string[])}
-            >
-              <Row gutter={[16, 12]}>
-                {CLEANING_OPTIONS.map(option => (
-                  <Col span={12} key={option.value}>
-                    <Checkbox value={option.value}>{option.label}</Checkbox>
-                  </Col>
-                ))}
-              </Row>
-            </Checkbox.Group>
-          </Card>
-
-          <div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginBottom: 12,
-              alignItems: 'center'
-            }}>
-              <Text strong>Nhập văn bản cần xử lý:</Text>
-              <Button
-                type="primary"
-                danger
-                size="small"
-                icon={<ClearOutlined />}
-                onClick={handleClear}
-                style={{ borderRadius: 6 }}
-              >
-                Xóa sạch
-              </Button>
-            </div>
-            <TextArea
-              rows={10}
-              value={inputData}
-              onChange={(e) => setInputData(e.target.value)}
-              placeholder="Dán nội dung vào đây..."
-              style={COMMON_STYLES.codeTextArea}
-            />
-          </div>
-
-          <Button
-            type="primary"
-            icon={<ScissorOutlined />}
-            size="large"
-            block
-            onClick={handleClean}
-            disabled={!inputData.trim() || selectedOptions.length === 0}
-            style={COMMON_STYLES.primaryButton}
-          >
-            Clean & Format Data
-          </Button>
-
-          {result && (
-            <div style={{ marginTop: 8 }}>
-              <Divider>Kết quả sau khi làm sạch</Divider>
-              <div style={{ position: 'relative' }}>
-                <pre style={{ ...COMMON_STYLES.codeDisplay, minHeight: '60px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
-                  {result}
-                </pre>
-                <Tooltip title="Copy kết quả">
-                  <Button
-                    type="default"
-                    icon={<CopyOutlined />}
-                    onClick={handleCopy}
-                    style={{ position: 'absolute', right: 12, top: 12, borderRadius: 6 }}
-                  >
-                    Copy
-                  </Button>
-                </Tooltip>
-              </div>
-            </div>
-          )}
-        </Space>
-      </Card>
-
-      <div style={{ textAlign: 'center', marginTop: 24, color: COLORS.textSecondary }}>
-        <Text type="secondary" style={{ fontSize: 12 }}>
-          Công cụ làm sạch văn bản, tối lưu lượng code và văn bản thô theo các mẫu Regex biểu thức chuẩn hóa.
-        </Text>
-      </div>
-    </div>
+      <CodeDisplay title="Kết quả sau khi làm sạch" content={result} isPre />
+    </PageContainer>
   );
 };
 

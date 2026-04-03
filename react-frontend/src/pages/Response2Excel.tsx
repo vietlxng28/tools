@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
-import { Button, Card, message, Typography, Space, Input, Row, Col } from 'antd';
-import { DownloadOutlined, ClearOutlined, SettingOutlined, FileSearchOutlined } from '@ant-design/icons';
-import { COMMON_STYLES, COLORS } from '../styles/styleConstants';
+import { Button, message, Input, Row, Col, Typography } from 'antd';
+import { DownloadOutlined, FileSearchOutlined, SettingOutlined } from '@ant-design/icons';
+import { COMMON_STYLES } from '../styles/styleConstants';
+import PageContainer from '../components/PageContainer';
+import SectionCard from '../components/SectionCard';
+import CodeInput from '../components/CodeInput';
 
 const { Text } = Typography;
-const { TextArea } = Input;
 
 const Response2Excel: React.FC = () => {
   const [jsonInput, setJsonInput] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [dataKey, setDataKey] = useState<string>('data');
   const [nameKey, setNameKey] = useState<string>('fileName');
-
-  const handleClear = () => {
-    setJsonInput('');
-  };
 
   const handleDownload = () => {
     const rawInput = jsonInput.trim();
@@ -63,91 +61,56 @@ const Response2Excel: React.FC = () => {
   };
 
   return (
-    <div style={COMMON_STYLES.pageContainer}>
-      <Card
-        title={
-          <Space>
-            <FileSearchOutlined style={{ ...COMMON_STYLES.titleIcon, color: COLORS.primary }} />
-            <Text strong>Response To Excel Converter</Text>
-          </Space>
-        }
-        bordered={false}
-        style={COMMON_STYLES.mainCard}
-      >
-        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+    <PageContainer
+      title="Response To Excel Converter"
+      icon={<FileSearchOutlined />}
+      footerText="Công cụ giúp parse trực tiếp kết quả từ API (JSON) có chứa nội dung tệp ở định dạng Base64."
+    >
+      <SectionCard title="Cấu hình Key Mapping" icon={<SettingOutlined />}>
+        <Row gutter={24}>
+          <Col span={12}>
+            <Text strong>Key chứa Base64:</Text>
+            <Input
+              value={dataKey}
+              onChange={e => setDataKey(e.target.value)}
+              placeholder="e.g. data, content, base64"
+              style={{ marginTop: 8, borderRadius: 8 }}
+            />
+          </Col>
+          <Col span={12}>
+            <Text strong>Key chứa Tên file:</Text>
+            <Input
+              value={nameKey}
+              onChange={e => setNameKey(e.target.value)}
+              placeholder="e.g. fileName, title, name"
+              style={{ marginTop: 8, borderRadius: 8 }}
+            />
+          </Col>
+        </Row>
+      </SectionCard>
 
-          <Card
-            size="small"
-            type="inner"
-            title={<Space><SettingOutlined /> <Text strong>Cấu hình Key Mapping</Text></Space>}
-            style={COMMON_STYLES.sectionCard}
-          >
-            <Row gutter={24}>
-              <Col span={12}>
-                <Text strong>Key chứa Base64:</Text>
-                <Input
-                  value={dataKey}
-                  onChange={e => setDataKey(e.target.value)}
-                  placeholder="e.g. data, content, base64"
-                  style={{ marginTop: 8, borderRadius: 8 }}
-                />
-              </Col>
-              <Col span={12}>
-                <Text strong>Key chứa Tên file:</Text>
-                <Input
-                  value={nameKey}
-                  onChange={e => setNameKey(e.target.value)}
-                  placeholder="e.g. fileName, title, name"
-                  style={{ marginTop: 8, borderRadius: 8 }}
-                />
-              </Col>
-            </Row>
-          </Card>
+      <CodeInput
+        label="Dán JSON Response vào đây:"
+        value={jsonInput}
+        onChange={setJsonInput}
+        onClear={() => setJsonInput('')}
+        placeholder={`{ \n  "${dataKey}": "base64_string_here...", \n  "${nameKey}": "report_2026" \n}`}
+      />
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-            <Text strong>Dán JSON Response vào đây:</Text>
-            <Button
-              type="primary"
-              danger
-              icon={<ClearOutlined />}
-              onClick={handleClear}
-              size="small"
-              style={{ borderRadius: 6 }}
-            >
-              Xóa sạch
-            </Button>
-          </div>
-
-          <TextArea
-            rows={12}
-            value={jsonInput}
-            onChange={(e) => setJsonInput(e.target.value)}
-            placeholder={`{ \n  "${dataKey}": "base64_string_here...", \n  "${nameKey}": "report_2026" \n}`}
-            style={COMMON_STYLES.codeTextArea}
-          />
-
-          <Row justify="end">
-            <Button
-              type="primary"
-              icon={<DownloadOutlined />}
-              size="large"
-              onClick={handleDownload}
-              loading={loading}
-              disabled={!jsonInput.trim()}
-              style={COMMON_STYLES.primaryButton}
-            >
-              Trích xuất & Tải Excel
-            </Button>
-          </Row>
-        </Space>
-      </Card>
-
-      <div style={{ textAlign: 'center', marginTop: 24, color: COLORS.textSecondary }}>
-        <Text type="secondary" style={{ fontSize: 12 }}>
-          Công cụ giúp parse trực tiếp kết quả từ API (JSON) có chứa nội dung tệp ở định dạng Base64.
-        </Text>
-      </div>
-    </div>
+      <Row justify="end">
+        <Button
+          type="primary"
+          icon={<DownloadOutlined />}
+          size="large"
+          onClick={handleDownload}
+          loading={loading}
+          disabled={!jsonInput.trim()}
+          style={COMMON_STYLES.primaryButton}
+        >
+          Trích xuất & Tải Excel
+        </Button>
+      </Row>
+    </PageContainer>
   );
 };
 
