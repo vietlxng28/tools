@@ -10,12 +10,14 @@ interface CodeDisplayProps {
   content: string;
   isPre?: boolean;
   type?: 'default' | 'alert';
+  copyContent?: string;
 }
 
-const CodeDisplay: React.FC<CodeDisplayProps> = ({ title = 'Kết quả', content, isPre = false, type = 'default' }) => {
+const CodeDisplay: React.FC<CodeDisplayProps> = ({ title = 'Kết quả', content, isPre = false, type = 'default', copyContent }) => {
   const handleCopy = () => {
-    if (content) {
-      navigator.clipboard.writeText(content);
+    const textToCopy = copyContent !== undefined ? copyContent : content;
+    if (textToCopy) {
+      navigator.clipboard.writeText(textToCopy);
       message.success('Đã copy kết quả!');
     }
   };

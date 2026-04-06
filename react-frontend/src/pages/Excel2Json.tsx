@@ -218,7 +218,12 @@ const Excel2Json: React.FC = () => {
           title={`Kết quả JSON (${jsonData.length} records)`} 
           icon={<FileExcelOutlined style={{ color: COLORS.success }} />}
         >
-          <CodeDisplay content={JSON.stringify(jsonData, null, 2)} isPre title="" />
+          <CodeDisplay 
+            content={JSON.stringify(jsonData, null, 2)} 
+            copyContent={JSON.stringify(jsonData)} 
+            isPre 
+            title="" 
+          />
         </SectionCard>
       )}
     </PageContainer>
