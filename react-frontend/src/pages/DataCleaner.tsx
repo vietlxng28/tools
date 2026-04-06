@@ -21,7 +21,9 @@ const CLEANING_OPTIONS = [
   { label: '9. Xóa comment SQL', value: 'removeSqlComments' },
   { label: '10. Xóa comment HTML/XML', value: 'removeHtmlXmlComments' },
   { label: '11. Xóa comment YAML', value: 'removeYamlComments' },
-  { label: '12. Xóa Emoji sinh ra bởi LLM', value: 'removeEmojis' }
+  { label: '12. Xóa Emoji sinh ra bởi LLM', value: 'removeEmojis' },
+  { label: '13. Xóa comment Batch (.bat)', value: 'removeBatComments' },
+  { label: '14. Xóa comment Shell (.sh)', value: 'removeShComments' }
 ];
 
 const DataCleaner: React.FC = () => {
@@ -67,6 +69,14 @@ const DataCleaner: React.FC = () => {
 
       if (selectedOptions.includes('removeYamlComments')) {
         processed = processed.replace(/\s*#.*/g, '');
+      }
+
+      if (selectedOptions.includes('removeBatComments')) {
+        processed = processed.replace(/(^\s*(REM(\s+.*)?|::.*)$)/gim, '');
+      }
+
+      if (selectedOptions.includes('removeShComments')) {
+        processed = processed.replace(/(\s*#(?!!).*$)/gim, '');
       }
 
       if (selectedOptions.includes('removeCitation')) {
