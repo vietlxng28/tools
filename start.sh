@@ -9,12 +9,13 @@ echo ""
 
 echo "[1/3] Starting Spring Boot Backend..."
 
-gnome-terminal -- bash -c "
-cd spring-backend || exit
-chmod +x mvnw
-MAVEN_OPTS='-Xms128m -Xmx384m' ./mvnw clean spring-boot:run
-exec bash
-" &
+(
+    cd spring-backend || exit
+    chmod +x mvnw
+    MAVEN_OPTS='-Xms128m -Xmx384m' ./mvnw clean spring-boot:run
+) > backend.log 2>&1 &
+
+echo "Backend is launching in the background (Log: backend.log)..."
 
 echo ""
 echo "[2/3] Checking React Frontend..."
@@ -33,13 +34,16 @@ fi
 echo ""
 echo "[3/3] Starting React Frontend..."
 
-gnome-terminal -- bash -c "
-cd react-frontend || exit
-npm run dev
-exec bash
-" &
+(
+    cd react-frontend || exit
+    npm run dev
+) > frontend.log 2>&1 &
+
+echo "Frontend is launching in the background (Log: frontend.log)..."
 
 echo ""
 echo "-------------------------------------------"
-echo "Application is starting..."
+echo "Application is starting successfully!"
+echo "To view backend log : tail -f backend.log"
+echo "To view frontend log: tail -f frontend.log"
 echo "-------------------------------------------"
