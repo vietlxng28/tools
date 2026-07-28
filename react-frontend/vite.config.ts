@@ -14,6 +14,7 @@ export default defineConfig({
     },
   },
   server: {
+    port: 55173,
     proxy: {
       '/mcp-api': {
         target: 'http://localhost:27495/mcp',
